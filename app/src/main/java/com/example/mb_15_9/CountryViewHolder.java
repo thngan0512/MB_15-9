@@ -1,30 +1,48 @@
 package com.example.mb_15_9;
 
+import android.content.Intent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class CountryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+public class CountryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private MyAdapter madapter;
-    public TextView tid;
-    public TextView tcountry;
+    private Article currentArticle;
+
+    public TextView tvTitle;
+    public TextView tvContent;
+    public TextView tvViews;
+    public ImageView ivCover;
+
     public CountryViewHolder(View item, MyAdapter adapter) {
         super(item);
         this.madapter = adapter;
-        this.tid = item.findViewById(R.id.tid);
-        this.tcountry = item.findViewById(R.id.tcountry);
+        this.tvTitle   = item.findViewById(R.id.tvTitle);
+        this.tvContent = item.findViewById(R.id.tvContent);
+        this.tvViews   = item.findViewById(R.id.tvViews);
+        this.ivCover   = item.findViewById(R.id.ivCover);
         item.setOnClickListener(this);
+    }
 
-
+    /** Gắn article hiện tại để dùng khi click */
+    public void bind(Article article) {
+        this.currentArticle = article;
     }
 
     @Override
     public void onClick(View v) {
-        String msg = tid.getText() + " | " + tcountry.getText();
-        Toast.makeText(v.getContext(), msg, Toast.LENGTH_SHORT).show();
+        if (currentArticle == null) return;
+
+        // Tăng lượt xem
+        currentArticle.increaseView();
+        tvViews.setText("Views: " + currentArticle.getView());
+
+        // Mở màn hình chi tiết, truyền article qua Intent
+        Intent intent = new Intent(v.getContext(), DetailActivity.class);
+        intent.putExtra("article", currentArticle);
+        v.getContext().startActivity(intent);
     }
 }
-
